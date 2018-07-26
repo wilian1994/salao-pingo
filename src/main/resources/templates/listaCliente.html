@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>ListaVIP</title>
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+
+	<div class="container">
+
+		<div id="listaDeConvidados">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Horário</th>
+						<th>Corte</th>
+						<th>Progressiva</th>
+					</tr>
+				</thead>
+				<tr th:each="horario : ${horarios}">
+					<td><span th:text="${horario.horario}"></span></td>
+					<td>
+						<div th:if="${horario.tipo == 'CORTE'}">
+							<span th:text="${horario.cliente}"></span>
+						</div>
+						<div th:if="${horario.tipo != 'CORTE'}">
+							<button>Agendar</button>
+						</div>
+						
+					</td>
+					<div th:if="${#strings.substringAfter(horario.horario, ':') == '00'}" >
+						<td rowspan="2">
+							<div th:if="${horario.tipo == 'PROGRESSIVA'}">
+							<span th:text="${horario.cliente}"></span>
+						</div>
+						<div th:if="${horario.tipo != 'PROGRESSIVA'}">
+							<button>Agendar</button>
+						</div>
+							
+						</td>
+					</div>
+				</tr>
+			</table>
+	</div>
+		
+		<hr/>
+
+
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+
+</body>
+</html>

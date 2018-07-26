@@ -1,0 +1,240 @@
+﻿﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Pingo</title>
+    <link rel="icon" type="imagem/png" th:href="@{/image/barber.png}" href="/image/barber.png" />
+    <!-- BOOTSTRAP STYLE SHEET -->
+    <link  href="assets/css/bootstrap.css" th:href="@{/assets/css/bootstrap.css}" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"  th:href="@{https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css}"/>
+    <script src="https://code.jquery.com/jquery-1.12.1.js" th:src="@{https://code.jquery.com/jquery-1.12.1.js}"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" th:src="@{https://code.jquery.com/ui/1.12.1/jquery-ui.js}"></script>
+    <script>
+    /*<![CDATA[*/
+        function DisableMonday(date) {
+ 
+		 var day = date.getDay();
+		// If day == 1 then it is MOnday
+		if (day <= 1  ) {
+		
+		return [false] ; 
+		
+		} else { 
+		
+		return [true] ;
+		}
+		 
+		}
+		   $( function() {
+		            $( "#datepicker" ).datepicker({
+		        dateFormat: 'dd/mm/yy',
+		        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
+		        dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+		        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+		        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+		        monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+		        beforeShowDay: DisableMonday,
+		        
+		        onSelect: function(){
+			    	 var data = document.getElementById('datepicker').value;
+					
+			    	 document.location = "/lista/" +  data.replace(/\//g,'');
+			     }
+		       
+		    });
+		});
+
+	var options = {onKeyPress: function(phone, e){
+	
+	$target = "." + $(e.target).closest('input').attr('class');
+	
+	if(/(\(11\) 9?(9|8|7)).+/i.test(phone)){
+	  $($target).mask('(11) 00000-0000', options);
+	} else {
+	  $($target).mask('(11) 0000-0000', options);         
+	}
+	}};
+	
+	function mascara(o,f){
+	    v_obj=o
+	    v_fun=f
+	    setTimeout("execmascara()",1)
+	}
+	function execmascara(){
+	    v_obj.value=v_fun(v_obj.value)
+	}
+	function mtel(v){
+	    v=v.replace(/\D/g,"");             //Remove tudo o que não é dígito
+	    v=v.replace(/^(\d{2})(\d)/g,"($1) $2"); //Coloca parênteses em volta dos dois primeiros dígitos
+	    v=v.replace(/(\d)(\d{4})$/,"$1-$2");    //Coloca hífen entre o quarto e o quinto dígitos
+	    return v;
+	}
+	function id( el ){
+		return document.getElementById( el );
+	}
+	window.onload = function(){
+		id('celular').onkeyup = function(){
+			mascara( this, mtel );
+		}
+	}
+/*]]>*/
+    </script>
+
+    <style>
+        body {
+            padding-top:70px; /*Required FOR FIXED TOP NAVBAR*/
+           
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="modal" tabindex="-1" id="modal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dados</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+            </div>
+            <div class="modal-body">
+                    <form method="POST" th:action="@{/salvar}" th:object="${cliente}">
+                        <div class="form-group"> 
+                            <input class='form-control' placeholder="Nome ou apelido"  th:field="*{nome}"  />
+                        </div>
+                        <input class='form-control' maxlength="15" id="celular" placeholder="Celular"  th:field="*{telefone}"  />
+                        <input class='form-control' maxlength="15" id="campo" placeholder="Horario" type="hidden"  th:field="*{horario}"  />
+                        <input class='form-control' maxlength="15" id="dataAgendamento" placeholder="Celular" type="hidden" th:field="*{{dataAgendamento}}"   />
+                        <input class='form-control' maxlength="15" id="tipoItem" placeholder="Celular" type="hidden" th:field="*{tipo}"   />
+	                    <div class="modal-footer">
+	                        <button type="submit" class="btn btn-primary">Agendar</button>
+	                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+	                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="dados" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dados</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        </button>
+                </div>
+                <div class="modal-body">
+                		<form method="GET" th:action="@{/excluir}" th:object="${cliente}">
+                			<input type="hidden" name="id" id="idCliente" />
+	                        <p id="nomeCliente" ></p>
+	                      	<p id="telefoneCliente"></p>
+	                        <div class="modal-footer">
+	                                <button type="submit" class="btn btn-danger" >Excluir</button>
+	                                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+	                        </div>
+	                    </form>    
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <!-- NAVBAR CODE END -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                    <h2>    Pingo</h2>
+                <br />
+            </div>
+        </div>
+        <div class="form-group">
+                <div class="input-group col-md-2 col-xs-6 ">
+                    <input type="text" class="form-control" name="validate-text"  th:value="${#calendars.format(dataSelecionado,'dd/MM/yyyy')}" id="datepicker" placeholder="Data" required="required"/>
+                    <span class="input-group-addon btn btn-primary" id="datepicker"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+        </div>
+      
+        
+
+        <!-- ROW END -->
+        <table class="table table-bordered">
+               
+                <thead>
+                   <tr>
+                       <td  align="center"><b>Horário</b></td>
+                       <td  align="center"><b>Corte</b></td>
+                       <td  align="center"><b>Progressiva</b></td>
+                    </tr>
+                </thead>
+                <tbody>
+                   <tr align="center" th:each="horario : ${horarios}">
+                        <td ><span th:text="${horario.horario}"></span></td> 
+                        <td>
+                        	<div  th:if="${horario.corte != null}">
+								<a href="#" data-toggle="modal" data-target="#dados" th:onclick="|carregaEdicaoCliente('${horario.idCorte}')|"><span th:text="${horario.corte}"></span></a>
+							</div>
+							<div th:if="${horario.corte == null}">
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal" th:onclick="|setaDadosModal('${horario.horario}', 'CORTE')|">Agendar</button>
+							</div>
+                        </td>
+                        <div th:if="${#strings.substringAfter(horario.horario, ':') == '00'}" >
+	                        <td rowspan="2">
+		                        <div th:if="${horario.progressiva != null}">
+		                       		<a href="#" data-toggle="modal" data-target="#dados" th:onclick="|carregaEdicaoCliente('${horario.idProgressiva}')|"><span th:text="${horario.progressiva}"></span></a>
+								</div>
+								<div th:if="${horario.progressiva == null}">
+									 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal" th:onclick="|setaDadosModal('${horario.horario}', 'PROGRESSIVA	')|">Agendar</button>
+								</div>
+	                        </td> 
+	                    </div>
+                   </tr>
+                </tbody>
+             </table>
+              
+
+        </div>
+        <!-- CONATINER END -->
+    <!-- REQUIRED SCRIPTS FILES -->
+    <!-- CORE JQUERY FILE -->
+  
+    <!-- REQUIRED BOOTSTRAP SCRIPTS -->
+    <script src="assets/js/bootstrap.js" th:src="@{/assets/js/bootstrap.js}"></script>
+    <script>
+    
+    /*<![CDATA[*/
+			function setaDadosModal(valor, tipo) {
+				var data = document.getElementById('datepicker').value;
+				document.getElementById('tipoItem').value = tipo;
+				document.getElementById('dataAgendamento').value = data;
+			    document.getElementById('campo').value = valor;
+			}
+    
+			function carregaEdicaoCliente(id) {
+				$.ajax({
+					type : "GET",
+					url : "/carregaCliente/" + id
+				}).done(function(cliente) {
+					client = jQuery.parseJSON(cliente);
+					document.getElementById('idCliente').value = client.id;
+					var nome = document.querySelector('#nomeCliente');
+					var telefone = document.querySelector('#telefoneCliente');
+					
+					nome.textContent = client.nome;
+					telefone.textContent = client.telefone;
+					
+				});
+			}
+			
+			
+	/*]]>*/
+			
+	</script>
+   
+</body>
+
+</html>
